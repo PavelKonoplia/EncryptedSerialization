@@ -1,0 +1,7 @@
+C:\Repos\EncryptedSerialization\EncryptedSerialization\bin\Debug\EncryptedSerialization.exe.config
+C:\Repos\EncryptedSerialization\EncryptedSerialization\bin\Debug\EncryptedSerialization.exe
+C:\Repos\EncryptedSerialization\EncryptedSerialization\bin\Debug\EncryptedSerialization.pdb
+C:\Repos\EncryptedSerialization\EncryptedSerialization\obj\Debug\EncryptedSerialization.csprojResolveAssemblyReference.cache
+C:\Repos\EncryptedSerialization\EncryptedSerialization\obj\Debug\EncryptedSerialization.csproj.CoreCompileInputs.cache
+C:\Repos\EncryptedSerialization\EncryptedSerialization\obj\Debug\EncryptedSerialization.exe
+C:\Repos\EncryptedSerialization\EncryptedSerialization\obj\Debug\EncryptedSerialization.pdb
