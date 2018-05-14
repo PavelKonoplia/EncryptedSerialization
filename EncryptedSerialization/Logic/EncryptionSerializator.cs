@@ -51,10 +51,10 @@ namespace EncryptedSerialization.Logic
             var type = GetType();
             if (Attribute.IsDefined(type, typeof(EncryptionAttribute)))
             {
-                var attribute = Attribute.GetCustomAttribute(type, typeof(EncryptionAttribute)) as EncryptionAttribute;
-                EncryptionService = attribute.EncryptionService;
-                Key = attribute.Key;
-                IV = attribute.IV;
+                var encryptionAttribute = Attribute.GetCustomAttribute(type, typeof(EncryptionAttribute)) as EncryptionAttribute;
+                EncryptionService = encryptionAttribute.EncryptionService;
+                Key = encryptionAttribute.Key;
+                IV = encryptionAttribute.IV;
             }
         }
 
