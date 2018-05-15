@@ -9,25 +9,25 @@ using System.Threading.Tasks;
 
 namespace EncryptedSerialization.Service
 {
-    class EncryptionService: IEncryptionService
+    class EncryptionService : IEncryptionService
     {
-        public byte[] Encrypt(object plainText, byte[] Key, byte[] IV)
+        public byte[] Encrypt(object forEncryption, byte[] Key, byte[] IV)
         {
 
-           /* if (plainText == null || plainText.Length <= 0)
-                throw new ArgumentNullException("plainText");*/
+            if (forEncryption == null)
+                throw new ArgumentNullException("forEncryption");
             if (Key == null || Key.Length <= 0)
                 throw new ArgumentNullException("Key");
             if (IV == null || IV.Length <= 0)
                 throw new ArgumentNullException("IV");
-            
+
             byte[] encrypted;
 
             using (Aes aesAlg = Aes.Create())
             {
                 aesAlg.Key = Key;
                 aesAlg.IV = IV;
-                
+
                 ICryptoTransform encryptor = aesAlg.CreateEncryptor(aesAlg.Key, aesAlg.IV);
 
                 using (var msEncrypt = new MemoryStream())
@@ -36,7 +36,7 @@ namespace EncryptedSerialization.Service
                     {
                         using (var swEncrypt = new StreamWriter(csEncrypt))
                         {
-                            swEncrypt.Write(plainText);
+                            swEncrypt.Write(forEncryption);
                         }
                         encrypted = msEncrypt.ToArray();
                     }
@@ -44,26 +44,26 @@ namespace EncryptedSerialization.Service
             }
             return encrypted;
         }
-        public object Decrypt(byte[] cipherText, byte[] Key, byte[] IV)
+        public object Decrypt(byte[] forDecryption, byte[] Key, byte[] IV)
         {
-         /*   if (cipherText == null || cipherText.Length <= 0)
-                throw new ArgumentNullException("cipherText");*/
+            if (forDecryption == null)
+                throw new ArgumentNullException("cipherText");
             if (Key == null || Key.Length <= 0)
                 throw new ArgumentNullException("Key");
             if (IV == null || IV.Length <= 0)
                 throw new ArgumentNullException("IV");
-            
 
-            string plaintext;
-            
+
+            object plaintext;
+
             using (Aes aesAlg = Aes.Create())
             {
                 aesAlg.Key = Key;
                 aesAlg.IV = IV;
-                
+
                 ICryptoTransform decryptor = aesAlg.CreateDecryptor(aesAlg.Key, aesAlg.IV);
-                
-                using (var msDecrypt = new MemoryStream(cipherText))
+
+                using (var msDecrypt = new MemoryStream(forDecryption))
                 {
                     using (var csDecrypt = new CryptoStream(msDecrypt, decryptor, CryptoStreamMode.Read))
                     {
@@ -77,27 +77,5 @@ namespace EncryptedSerialization.Service
 
             return plaintext;
         }
-        /*
-        private byte[] ObjectToByteArray(Object obj)
-        {
-            BinaryFormatter bf = new BinaryFormatter();
-            using (var ms = new MemoryStream())
-            {
-                bf.Serialize(ms, obj);
-                return ms.ToArray();
-            }
-        }
-
-        private Object ByteArrayToObject(byte[] arrBytes)
-        {
-            using (var memStream = new MemoryStream())
-            {
-                var binForm = new BinaryFormatter();
-                memStream.Write(arrBytes, 0, arrBytes.Length);
-                memStream.Seek(0, SeekOrigin.Begin);
-                var obj = binForm.Deserialize(memStream);
-                return obj;
-            }
-        }*/
     }
 }

@@ -47,7 +47,6 @@ namespace EncryptedSerialization.Logic
             FilePath = filePath;
             SerializationFileMode = fileMode;
             FromAncestors = acient;
-
             GetServiceFromAttribute();
         }
 
