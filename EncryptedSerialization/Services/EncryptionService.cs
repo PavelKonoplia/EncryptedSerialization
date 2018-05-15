@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using System.Runtime.Serialization.Formatters.Binary;
 using System.Security.Cryptography;
 using System.Text;
 using System.Threading.Tasks;
@@ -10,16 +11,16 @@ namespace EncryptedSerialization.Service
 {
     class EncryptionService: IEncryptionService
     {
-        public byte[] Encrypt(string plainText, byte[] Key, byte[] IV)
+        public byte[] Encrypt(object plainText, byte[] Key, byte[] IV)
         {
 
-            if (plainText == null || plainText.Length <= 0)
-                throw new ArgumentNullException("plainText");
+           /* if (plainText == null || plainText.Length <= 0)
+                throw new ArgumentNullException("plainText");*/
             if (Key == null || Key.Length <= 0)
                 throw new ArgumentNullException("Key");
             if (IV == null || IV.Length <= 0)
                 throw new ArgumentNullException("IV");
-
+            
             byte[] encrypted;
 
             using (Aes aesAlg = Aes.Create())
@@ -43,15 +44,16 @@ namespace EncryptedSerialization.Service
             }
             return encrypted;
         }
-        public string Decrypt(byte[] cipherText, byte[] Key, byte[] IV)
+        public object Decrypt(byte[] cipherText, byte[] Key, byte[] IV)
         {
-            if (cipherText == null || cipherText.Length <= 0)
-                throw new ArgumentNullException("cipherText");
+         /*   if (cipherText == null || cipherText.Length <= 0)
+                throw new ArgumentNullException("cipherText");*/
             if (Key == null || Key.Length <= 0)
                 throw new ArgumentNullException("Key");
             if (IV == null || IV.Length <= 0)
                 throw new ArgumentNullException("IV");
             
+
             string plaintext;
             
             using (Aes aesAlg = Aes.Create())
@@ -75,6 +77,27 @@ namespace EncryptedSerialization.Service
 
             return plaintext;
         }
+        /*
+        private byte[] ObjectToByteArray(Object obj)
+        {
+            BinaryFormatter bf = new BinaryFormatter();
+            using (var ms = new MemoryStream())
+            {
+                bf.Serialize(ms, obj);
+                return ms.ToArray();
+            }
+        }
 
+        private Object ByteArrayToObject(byte[] arrBytes)
+        {
+            using (var memStream = new MemoryStream())
+            {
+                var binForm = new BinaryFormatter();
+                memStream.Write(arrBytes, 0, arrBytes.Length);
+                memStream.Seek(0, SeekOrigin.Begin);
+                var obj = binForm.Deserialize(memStream);
+                return obj;
+            }
+        }*/
     }
 }

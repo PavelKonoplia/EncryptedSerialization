@@ -21,6 +21,8 @@ namespace EncryptedSerialization.Logic
         protected FileMode SerializationFileMode { get; set; }
         protected IEncryptionService EncryptionService { get; set; }
 
+        protected string FromAncestors { get; set; }
+
         protected byte[] Key { get; set; }
         protected byte[] IV { get; set; }
         protected EncryptionSerializator()
@@ -30,19 +32,22 @@ namespace EncryptedSerialization.Logic
 
         public virtual void GetObjectData(SerializationInfo info, StreamingContext context)
         {
-
+            info.AddValue("FromAncestors", EncryptionService.Encrypt(FromAncestors, Key, IV));
         }
 
         protected EncryptionSerializator(SerializationInfo info, StreamingContext context)
         {
-
+            GetServiceFromAttribute();
+            FromAncestors = (string)(EncryptionService.Decrypt((byte[])info.GetValue("FromAncestors", typeof(byte[])), Key, IV));
         }
 
-        public EncryptionSerializator(IFormatter formatter, string filePath, FileMode fileMode = FileMode.OpenOrCreate)
+        public EncryptionSerializator(IFormatter formatter, string filePath, string acient, FileMode fileMode = FileMode.OpenOrCreate)
         {
             SerializationFormatter = formatter;
             FilePath = filePath;
             SerializationFileMode = fileMode;
+            FromAncestors = acient;
+
             GetServiceFromAttribute();
         }
 
