@@ -35,11 +35,6 @@ namespace EncryptedSerialization
             SecureMessenger wattsUp = (SecureMessenger)messenger.Deserialization(messenger);
 
             wattsUp.SendMessage();
-            //  wattsUp.Test.PrintTest();
-
-
-
-
 
             Console.ReadKey();
         }

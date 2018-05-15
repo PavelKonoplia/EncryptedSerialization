@@ -10,7 +10,6 @@ using System.Threading.Tasks;
 namespace EncryptedSerialization.Logic
 {
     [Serializable]
-  //  [Encryption("EncryptedSerialization.Service.EncryptionService", 1111, 1111)]
     public class ForTest
     {
         public string Test { get; set; }
