@@ -26,7 +26,6 @@ namespace EncryptedSerialization.Logic
     [Serializable]
     public class SecureMessenger : EncryptionSerializator
     {
-
         public string Message { get; set; }
         public int MessageID { get; set; }
         public double MessagePoints { get; set; }
@@ -62,7 +61,6 @@ namespace EncryptedSerialization.Logic
             Message = (string)EncryptionService.Decrypt((byte[])info.GetValue("Message", typeof(byte[])), Key, IV);
             MessageID = Convert.ToInt32(EncryptionService.Decrypt((byte[])info.GetValue("MessageID", typeof(byte[])), Key, IV));
             MessagePoints = Convert.ToDouble(EncryptionService.Decrypt((byte[])info.GetValue("MessagePoints", typeof(byte[])), Key, IV));
-            Test = EncryptionService.Decrypt((byte[])info.GetValue("Test", typeof(byte[])), Key, IV) as ForTest;
         }
 
         public void SendMessage()

@@ -53,8 +53,7 @@ namespace EncryptedSerialization.Service
             if (IV == null || IV.Length <= 0)
                 throw new ArgumentNullException("IV");
 
-
-            object plaintext;
+            object decrypted;
 
             using (Aes aesAlg = Aes.Create())
             {
@@ -69,13 +68,13 @@ namespace EncryptedSerialization.Service
                     {
                         using (var srDecrypt = new StreamReader(csDecrypt))
                         {
-                            plaintext = srDecrypt.ReadToEnd();
+                            decrypted = srDecrypt.ReadToEnd();
                         }
                     }
                 }
             }
 
-            return plaintext;
+            return decrypted;
         }
     }
 }
