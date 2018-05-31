@@ -25,6 +25,7 @@ namespace EncryptedSerialization.Logic
 
         protected byte[] Key { get; set; }
         protected byte[] IV { get; set; }
+
         protected EncryptionSerializator()
         {
             GetServiceFromAttribute();
@@ -32,13 +33,64 @@ namespace EncryptedSerialization.Logic
 
         public virtual void GetObjectData(SerializationInfo info, StreamingContext context)
         {
-            info.AddValue("FromAncestors", EncryptionService.Encrypt(FromAncestors, Key, IV));
+            Type type = GetType();
+            PropertyInfo[] propsInfos = type.GetProperties();
+            FieldInfo[] fieldsInfos = type.GetFields();
+
+            if (EncryptionService != null)
+            {
+                foreach (PropertyInfo prop in propsInfos)
+                {
+                    info.AddValue(prop.Name, EncryptionService.Encrypt(prop.GetValue(this)));
+                }
+                foreach (FieldInfo field in fieldsInfos)
+                {
+                    info.AddValue(field.Name, EncryptionService.Encrypt(field.GetValue(this)));
+                }
+            }
+            else
+            {
+                foreach (PropertyInfo prop in propsInfos)
+                {
+                    info.AddValue(prop.Name, prop.GetValue(this));
+                }
+                foreach (FieldInfo field in fieldsInfos)
+                {
+                    info.AddValue(field.Name, field.GetValue(this));
+                }
+            }
         }
 
         protected EncryptionSerializator(SerializationInfo info, StreamingContext context)
         {
             GetServiceFromAttribute();
-            FromAncestors = (string)(EncryptionService.Decrypt((byte[])info.GetValue("FromAncestors", typeof(byte[])), Key, IV));
+
+            Type type = GetType();
+            PropertyInfo[] propsInfos = type.GetProperties();
+            FieldInfo[] fieldsInfos = type.GetFields();
+
+            if (EncryptionService != null)
+            {
+                foreach (PropertyInfo prop in propsInfos)
+                {
+                    prop.SetValue(this, Convert.ChangeType(EncryptionService.Decrypt((byte[])info.GetValue(prop.Name, typeof(byte[]))), prop.PropertyType));
+                }
+                foreach (FieldInfo field in fieldsInfos)
+                {
+                    field.SetValue(this, Convert.ChangeType(EncryptionService.Decrypt((byte[])info.GetValue(field.Name, typeof(byte[]))), field.FieldType));
+                }
+            }
+            else
+            {
+                foreach (PropertyInfo prop in propsInfos)
+                {
+                    prop.SetValue(this, info.GetValue(prop.Name, prop.PropertyType));
+                }
+                foreach (FieldInfo field in fieldsInfos)
+                {
+                    field.SetValue(this, info.GetValue(field.Name, field.FieldType));
+                }
+            }
         }
 
         public EncryptionSerializator(IFormatter formatter, string filePath, string acient, FileMode fileMode = FileMode.OpenOrCreate)
@@ -57,8 +109,6 @@ namespace EncryptedSerialization.Logic
             {
                 var encryptionAttribute = Attribute.GetCustomAttribute(type, typeof(EncryptionAttribute)) as EncryptionAttribute;
                 EncryptionService = encryptionAttribute.EncryptionService;
-                Key = encryptionAttribute.Key;
-                IV = encryptionAttribute.IV;
             }
         }
 

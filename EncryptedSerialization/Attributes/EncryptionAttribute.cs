@@ -1,52 +1,30 @@
-﻿using EncryptedSerialization.Service;
-using System;
-using System.Collections.Generic;
+﻿using System;
 using System.Linq;
 using System.Reflection;
-using System.Security.Cryptography;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace EncryptedSerialization.Attributes
 {
     [AttributeUsage(AttributeTargets.Class | AttributeTargets.Struct)]
-    class EncryptionAttribute : Attribute
+    public class EncryptionAttribute : Attribute
     {
-        private byte[] _key = new byte[16];
-        private byte[] _iv = new byte[16];
+        public IEncryptionService EncryptionService { get; set; }
 
-        public IEncryptionService EncryptionService;
-        public byte[] Key { get { return _key; }}
-        public byte[] IV { get { return _iv; } }
-
-        public EncryptionAttribute(string serviceName, int key, int iv)
+        public EncryptionAttribute(string serviceName, params int[] parameters)
         {
-            SetService(serviceName);
-
-            var tkey = BitConverter.GetBytes(key);
-            var tiv = BitConverter.GetBytes(iv);
-
-            int i = 0, k =0;
-            while (i< _key.Length)
-            {
-                _key[i] = tkey[k];
-                _iv[i] = tiv[k];
-                i++;
-                k++;
-                k = k == 4 ? k = 0 : k;
-            }
+            SetService(serviceName, parameters);
         }
 
-        private void SetService(string serviceName) {
-
+        private void SetService(string serviceName, params int[] parameters)
+        {
             try
             {
                 Type service = Assembly.GetExecutingAssembly().GetType(serviceName);
-                EncryptionService = (IEncryptionService)Activator.CreateInstance(service);
+                ConstructorInfo[] constructorInfo = service.GetConstructors();
+                EncryptionService = constructorInfo[0].Invoke(parameters.Cast<object>().ToArray()) as IEncryptionService;
             }
             catch (Exception ex)
             {
-                Console.WriteLine(ex.Message);
+                throw ex;
             }
         }
     }

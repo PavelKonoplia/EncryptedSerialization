@@ -8,7 +8,7 @@ namespace EncryptedSerialization
 {
     public interface IEncryptionService
     {
-        object Decrypt(byte[] cipherText, byte[] Key, byte[] IV);
-        byte[] Encrypt(object input, byte[] key, byte[] iV);
+        object Decrypt(byte[] cipherText);
+        byte[] Encrypt(object input);
     }
 }

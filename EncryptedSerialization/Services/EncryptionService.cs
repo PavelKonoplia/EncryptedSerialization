@@ -11,22 +11,37 @@ namespace EncryptedSerialization.Service
 {
     class EncryptionService : IEncryptionService
     {
-        public byte[] Encrypt(object forEncryption, byte[] Key, byte[] IV)
-        {
 
+        private byte[] _key = new byte[16];
+        private byte[] _iv = new byte[16];
+
+        public EncryptionService(int key, int iv)
+        {
+            var tkey = BitConverter.GetBytes(key);
+            var tiv = BitConverter.GetBytes(iv);
+
+            int i = 0, k = 0;
+            while (i < _key.Length)
+            {
+                _key[i] = tkey[k];
+                _iv[i] = tiv[k];
+                i++;
+                k++;
+                k = k == 4 ? k = 0 : k;
+            }
+        }
+
+        public byte[] Encrypt(object forEncryption)
+        {
             if (forEncryption == null)
                 throw new ArgumentNullException("forEncryption");
-            if (Key == null || Key.Length <= 0)
-                throw new ArgumentNullException("Key");
-            if (IV == null || IV.Length <= 0)
-                throw new ArgumentNullException("IV");
 
             byte[] encrypted;
 
             using (Aes aesAlg = Aes.Create())
             {
-                aesAlg.Key = Key;
-                aesAlg.IV = IV;
+                aesAlg.Key = _key;
+                aesAlg.IV = _iv;
 
                 ICryptoTransform encryptor = aesAlg.CreateEncryptor(aesAlg.Key, aesAlg.IV);
 
@@ -38,27 +53,26 @@ namespace EncryptedSerialization.Service
                         {
                             swEncrypt.Write(forEncryption);
                         }
+
                         encrypted = msEncrypt.ToArray();
                     }
                 }
             }
+
             return encrypted;
         }
-        public object Decrypt(byte[] forDecryption, byte[] Key, byte[] IV)
+
+        public object Decrypt(byte[] forDecryption)
         {
             if (forDecryption == null)
-                throw new ArgumentNullException("cipherText");
-            if (Key == null || Key.Length <= 0)
-                throw new ArgumentNullException("Key");
-            if (IV == null || IV.Length <= 0)
-                throw new ArgumentNullException("IV");
+                throw new ArgumentNullException("forDecryption");
 
             object decrypted;
 
             using (Aes aesAlg = Aes.Create())
             {
-                aesAlg.Key = Key;
-                aesAlg.IV = IV;
+                aesAlg.Key = _key;
+                aesAlg.IV = _iv;
 
                 ICryptoTransform decryptor = aesAlg.CreateDecryptor(aesAlg.Key, aesAlg.IV);
 
