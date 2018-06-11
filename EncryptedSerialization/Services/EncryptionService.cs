@@ -20,6 +20,8 @@ namespace EncryptedSerialization.Service
             var tkey = BitConverter.GetBytes(key);
             var tiv = BitConverter.GetBytes(iv);
 
+            int minLength = Math.Min(tkey.Length, tiv.Length);
+
             int i = 0, k = 0;
             while (i < _key.Length)
             {
@@ -27,7 +29,7 @@ namespace EncryptedSerialization.Service
                 _iv[i] = tiv[k];
                 i++;
                 k++;
-                k = k == 4 ? k = 0 : k;
+                k = k == minLength ? k = 0 : k;
             }
         }
 

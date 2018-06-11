@@ -22,10 +22,7 @@ namespace EncryptedSerialization.Logic
         protected IEncryptionService EncryptionService { get; set; }
 
         protected string FromAncestors { get; set; }
-
-        protected byte[] Key { get; set; }
-        protected byte[] IV { get; set; }
-
+        
         protected EncryptionSerializator()
         {
             GetServiceFromAttribute();
